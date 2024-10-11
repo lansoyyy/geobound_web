@@ -24,7 +24,7 @@ class DrawerWidget extends StatelessWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                      border: Border.all(color: primary),
+                      border: Border.all(color: primary!),
                       shape: BoxShape.circle,
                       color: Colors.white),
                   child: Padding(
@@ -45,9 +45,9 @@ class DrawerWidget extends StatelessWidget {
                     onPressed: () {
                       Scaffold.of(context).closeDrawer();
                     },
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.menu,
-                      color: primary,
+                      color: primary!,
                       size: 32,
                     ),
                   );

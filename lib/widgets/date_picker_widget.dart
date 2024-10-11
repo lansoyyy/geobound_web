@@ -13,8 +13,7 @@ Future<DateTime?> datePickerWidget(
         data: ThemeData.light().copyWith(
           primaryColor: primary, // Header background color
 
-          colorScheme:
-              const ColorScheme.light(primary: primary), // Selection color
+          colorScheme: ColorScheme.light(primary: primary!), // Selection color
           buttonTheme: const ButtonThemeData(
             textTheme: ButtonTextTheme.primary, // Text color
           ),

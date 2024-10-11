@@ -34,7 +34,7 @@ class TextFieldWidget extends StatefulWidget {
     this.hint = '',
     required this.controller,
     this.isObscure = false,
-    this.width = double.infinity,
+    this.width = 300,
     this.height = 65,
     this.maxLine = 1,
     this.prefix,
@@ -74,6 +74,8 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
           textCapitalization: widget.textCapitalization!,
           keyboardType: widget.inputType,
           decoration: InputDecoration(
+            fillColor: Colors.white,
+            filled: true,
             prefix: widget.prefix,
             suffixIcon: widget.suffix ??
                 (widget.showEye! == true
