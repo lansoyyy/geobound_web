@@ -1,7 +1,8 @@
 import 'package:geobound_web/screens/auth/login_screen.dart';
-import 'package:geobound_web/screens/tabs/dashboard_tab.dart';
-import 'package:geobound_web/screens/tabs/reports_tab.dart';
-import 'package:geobound_web/screens/tabs/users_tab.dart';
+import 'package:geobound_web/screens/tabs/first)tab.dart';
+import 'package:geobound_web/screens/tabs/second_tab.dart';
+import 'package:geobound_web/screens/tabs/third_tab.dart';
+
 import 'package:geobound_web/utils/colors.dart';
 import 'package:geobound_web/widgets/logout_widget.dart';
 import 'package:geobound_web/widgets/text_widget.dart';
@@ -108,18 +109,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              // Expanded(
-              //     child: Container(
-              //   color: Colors.grey[100],
-              //   child: IndexedStack(
-              //     index: index,
-              //     children: const [
-              //       DashboardTab(),
-              //       UsersTab(),
-              //       ReportsTab(),
-              //     ],
-              //   ),
-              // )),
+              Expanded(
+                  child: Container(
+                color: Colors.grey[100],
+                child: IndexedStack(
+                  index: index,
+                  children: const [FirstTab(), SecondTab(), ThirdTab()],
+                ),
+              )),
             ],
           ),
         ),
