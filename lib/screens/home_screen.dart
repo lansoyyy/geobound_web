@@ -1,5 +1,6 @@
 import 'package:geobound_web/screens/auth/login_screen.dart';
-import 'package:geobound_web/screens/tabs/first)tab.dart';
+import 'package:geobound_web/screens/tabs/first_tab.dart';
+import 'package:geobound_web/screens/tabs/fourth_tab.dart';
 import 'package:geobound_web/screens/tabs/second_tab.dart';
 import 'package:geobound_web/screens/tabs/third_tab.dart';
 
@@ -114,7 +115,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.grey[100],
                 child: IndexedStack(
                   index: index,
-                  children: const [FirstTab(), SecondTab(), ThirdTab()],
+                  children: const [
+                    FirstTab(),
+                    SecondTab(),
+                    ThirdTab(),
+                    FourthTab()
+                  ],
                 ),
               )),
             ],
