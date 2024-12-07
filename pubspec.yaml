@@ -38,6 +38,11 @@ dependencies:
   fluttertoast:
   intl:
   flutter_map:
+  firebase_core:
+  cloud_firestore:
+  firebase_storage:
+  firebase_auth:
+  firebase_database:
 
 dev_dependencies:
   flutter_test:
