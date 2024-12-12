@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geobound_web/screens/auth/login_screen.dart';
 
 logout(BuildContext context, Widget navigationRoute) {
   return showDialog(
@@ -24,10 +25,10 @@ logout(BuildContext context, Widget navigationRoute) {
               ),
               MaterialButton(
                 onPressed: () async {
-                  // Navigator.of(context).pushReplacement(
-                  //   MaterialPageRoute(
-                  //       builder: (context) => const LoginScreen()),
-                  // );
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()),
+                  );
                 },
                 child: const Text(
                   'Continue',

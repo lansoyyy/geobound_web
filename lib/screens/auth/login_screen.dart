@@ -1,11 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:geobound_web/screens/home_screen.dart';
 import 'package:geobound_web/utils/colors.dart';
 import 'package:geobound_web/widgets/button_widget.dart';
 import 'package:geobound_web/widgets/text_widget.dart';
 import 'package:geobound_web/widgets/textfield_widget.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:geobound_web/widgets/toast_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -75,8 +74,13 @@ class _LoginScreenState extends State<LoginScreen> {
               radius: 10,
               label: 'Login',
               onPressed: () {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => const HomeScreen()));
+                if (username.text == 'admin_username' &&
+                    password.text == 'admin_password') {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => const HomeScreen()));
+                } else {
+                  showToast('Invalid admin credentials');
+                }
               },
             ),
           ],

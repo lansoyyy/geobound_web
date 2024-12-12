@@ -43,6 +43,11 @@ dependencies:
   firebase_storage:
   firebase_auth:
   firebase_database:
+  permission_handler:
+  open_file:
+  printing: ^5.9.3
+  url_launcher:
+  path_provider:
 
 dev_dependencies:
   flutter_test:

@@ -1,13 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:geobound_web/screens/auth/login_screen.dart';
 import 'package:geobound_web/screens/tabs/first_tab.dart';
 import 'package:geobound_web/screens/tabs/fourth_tab.dart';
+import 'package:geobound_web/screens/tabs/report_tab.dart';
 import 'package:geobound_web/screens/tabs/second_tab.dart';
 import 'package:geobound_web/screens/tabs/third_tab.dart';
-
+import 'package:geobound_web/services/add_sector.dart';
 import 'package:geobound_web/utils/colors.dart';
 import 'package:geobound_web/widgets/logout_widget.dart';
 import 'package:geobound_web/widgets/text_widget.dart';
-import 'package:flutter/material.dart';
+import 'package:geobound_web/widgets/toast_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,6 +32,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: index == 1
+          ? FloatingActionButton(
+              child: const Icon(
+                Icons.add,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                createDialog(false);
+              },
+            )
+          : null,
       backgroundColor: primary,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -106,6 +120,26 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 5, top: 5),
+                        child: Card(
+                          color: Colors.white,
+                          child: SizedBox(
+                            width: 200,
+                            child: ListTile(
+                              onTap: () {
+                                logout(context, const LoginScreen());
+                              },
+                              title: TextWidget(
+                                text: 'Logout',
+                                fontSize: 18,
+                                fontFamily: 'Bold',
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -119,7 +153,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     FirstTab(),
                     SecondTab(),
                     ThirdTab(),
-                    FourthTab()
+                    FourthTab(),
+                    ReportTab(),
                   ],
                 ),
               )),
@@ -127,6 +162,128 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  final TextEditingController model = TextEditingController();
+  final TextEditingController color = TextEditingController();
+  final TextEditingController platenumber = TextEditingController();
+
+  String? selectedValue;
+
+  String userId = '';
+
+  createDialog(bool inUpdate) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Add Vehicle'),
+          content: StatefulBuilder(builder: (context, setState) {
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('Users')
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasError) {
+                          print(snapshot.error);
+                          return const Center(child: Text('Error'));
+                        }
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Padding(
+                            padding: EdgeInsets.only(top: 50),
+                            child: Center(
+                                child: CircularProgressIndicator(
+                              color: Colors.black,
+                            )),
+                          );
+                        }
+
+                        final data = snapshot.requireData;
+                        return DropdownButton<String>(
+                          value: selectedValue,
+                          hint: const Text('Select the personnel'),
+                          icon: const Icon(Icons.arrow_drop_down),
+                          items: [
+                            for (int i = 0; i < data.docs.length; i++)
+                              DropdownMenuItem(
+                                value: data.docs[i].id,
+                                child: TextWidget(
+                                  text: data.docs[i]['name'],
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    userId = data.docs[i].id;
+                                  });
+                                },
+                              ),
+                          ],
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedValue = newValue;
+                            });
+                          },
+                        );
+                      }),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: model,
+                    decoration: const InputDecoration(
+                      labelText: 'Vehicle Model',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: color,
+                    decoration: const InputDecoration(
+                      labelText: 'Color',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: platenumber,
+                    decoration: const InputDecoration(
+                      labelText: 'Plate Number',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (userId != '') {
+                  addVehicle(model.text, color.text, platenumber.text, userId);
+                  Navigator.of(context).pop();
+                } else {
+                  Navigator.of(context).pop();
+                  showToast('Please select the personnel!');
+                }
+                // Handle saving the new employee's information here
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
