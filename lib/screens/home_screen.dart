@@ -6,7 +6,7 @@ import 'package:geobound_web/screens/tabs/fourth_tab.dart';
 import 'package:geobound_web/screens/tabs/report_tab.dart';
 import 'package:geobound_web/screens/tabs/second_tab.dart';
 import 'package:geobound_web/screens/tabs/third_tab.dart';
-import 'package:geobound_web/services/add_sector.dart';
+import 'package:geobound_web/services/add_vehicle.dart';
 import 'package:geobound_web/utils/colors.dart';
 import 'package:geobound_web/widgets/logout_widget.dart';
 import 'package:geobound_web/widgets/text_widget.dart';
