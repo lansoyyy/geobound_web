@@ -147,7 +147,15 @@ class _ThirdTabState extends State<ThirdTab> {
                                             return element['id'] ==
                                                 itemList[i]['ID'].toString();
                                           },
-                                        ).first['name'],
+                                        ).isNotEmpty
+                                            ? users.where(
+                                                (element) {
+                                                  return element['id'] ==
+                                                      itemList[i]['ID']
+                                                          .toString();
+                                                },
+                                              ).first['name']
+                                            : '',
                                         fontSize: 14,
                                         fontFamily: 'Medium',
                                         color: Colors.grey,
@@ -155,7 +163,12 @@ class _ThirdTabState extends State<ThirdTab> {
                                     ),
                                     DataCell(
                                       TextWidget(
-                                        text: itemList[i]['Timestamp'],
+                                        text: itemList[i]['Timestamp']
+                                                    .toString()
+                                                    .split(' ')[1] ==
+                                                'PM'
+                                            ? ''
+                                            : itemList[i]['Timestamp'] ?? '',
                                         fontSize: 14,
                                         fontFamily: 'Medium',
                                         color: Colors.grey,
@@ -163,7 +176,12 @@ class _ThirdTabState extends State<ThirdTab> {
                                     ),
                                     DataCell(
                                       TextWidget(
-                                        text: '',
+                                        text: itemList[i]['Timestamp']
+                                                    .toString()
+                                                    .split(' ')[1] !=
+                                                'PM'
+                                            ? ''
+                                            : itemList[i]['Timestamp'] ?? '',
                                         fontSize: 14,
                                         fontFamily: 'Medium',
                                         color: Colors.grey,

@@ -104,8 +104,18 @@ class _ReportTabState extends State<ReportTab> {
                                     return element['id'] ==
                                         itemList[i]['ID'].toString();
                                   },
+                                ).isEmpty ? '' : users.where(
+                                  (element) {
+                                    return element['id'] ==
+                                        itemList[i]['ID'].toString();
+                                  },
                                 ).first['name'],
                                 'number': users.where(
+                                  (element) {
+                                    return element['id'] ==
+                                        itemList[i]['ID'].toString();
+                                  },
+                                ).isEmpty ? '' : users.where(
                                   (element) {
                                     return element['id'] ==
                                         itemList[i]['ID'].toString();
@@ -113,6 +123,11 @@ class _ReportTabState extends State<ReportTab> {
                                 ).first['number'],
                                 'id': itemList[i]['ID'].toString(),
                                 'type': users.where(
+                                  (element) {
+                                    return element['id'] ==
+                                        itemList[i]['ID'].toString();
+                                  },
+                                ).isEmpty ? '' : users.where(
                                   (element) {
                                     return element['id'] ==
                                         itemList[i]['ID'].toString();
@@ -179,11 +194,16 @@ class _ReportTabState extends State<ReportTab> {
                                       DataCell(
                                         TextWidget(
                                           text: users.where(
-                                            (element) {
-                                              return element['id'] ==
-                                                  itemList[i]['ID'].toString();
-                                            },
-                                          ).first['name'],
+                                  (element) {
+                                    return element['id'] ==
+                                        itemList[i]['ID'].toString();
+                                  },
+                                ).isEmpty ? '' : users.where(
+                                  (element) {
+                                    return element['id'] ==
+                                        itemList[i]['ID'].toString();
+                                  },
+                                ).first['name'],
                                           fontSize: 14,
                                           fontFamily: 'Medium',
                                           color: Colors.grey,
@@ -191,7 +211,7 @@ class _ReportTabState extends State<ReportTab> {
                                       ),
                                       DataCell(
                                         TextWidget(
-                                          text: itemList[i]['Timestamp'],
+                                          text: itemList[i]['Timestamp'].toString().split(' ')[1] == 'PM' ? '' : itemList[i]['Timestamp'],
                                           fontSize: 14,
                                           fontFamily: 'Medium',
                                           color: Colors.grey,
@@ -199,7 +219,7 @@ class _ReportTabState extends State<ReportTab> {
                                       ),
                                       DataCell(
                                         TextWidget(
-                                          text: '',
+                                         text: itemList[i]['Timestamp'].toString().split(' ')[1] != 'PM' ? '' : itemList[i]['Timestamp'],
                                           fontSize: 14,
                                           fontFamily: 'Medium',
                                           color: Colors.grey,
@@ -207,12 +227,7 @@ class _ReportTabState extends State<ReportTab> {
                                       ),
                                       DataCell(
                                         TextWidget(
-                                          text: users.where(
-                                            (element) {
-                                              return element['id'] ==
-                                                  itemList[i]['ID'].toString();
-                                            },
-                                          ).first['type'],
+                                          text: 'Personnel',
                                           fontSize: 14,
                                           fontFamily: 'Medium',
                                           color: Colors.grey,
