@@ -138,7 +138,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   );
                                 }
                               });
-                              Navigator.of(context).pop(); // Close the dialog
                             } else {
                               // Show an error or a message
                               ScaffoldMessenger.of(context).showSnackBar(
