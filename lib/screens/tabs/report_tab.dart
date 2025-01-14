@@ -96,7 +96,7 @@ class _ReportTabState extends State<ReportTab> {
                               };
                             }).toList();
 
-                            for (int i = 0; i < users.length; i++) {
+                            for (int i = 0; i < data.length; i++) {
                               reports.add({
                                 'timein': itemList[i]['Timestamp'],
                                 'name': users.where(
@@ -181,7 +181,7 @@ class _ReportTabState extends State<ReportTab> {
                                   ),
                                 ],
                                 rows: [
-                                  for (int i = 0; i < users.length; i++)
+                                  for (int i = 0; i < data.length; i++)
                                     DataRow(cells: [
                                       DataCell(
                                         TextWidget(
