@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geobound_web/screens/home_screen.dart';
-import 'package:geobound_web/screens/personnel_screen.dart';
 import 'package:geobound_web/utils/colors.dart';
 import 'package:geobound_web/widgets/button_widget.dart';
 import 'package:geobound_web/widgets/text_widget.dart';
@@ -88,80 +86,80 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(
               height: 20,
             ),
-            TextButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text("Enter Personnel ID"),
-                      content: TextField(
-                        controller: _controller,
-                        decoration: const InputDecoration(
-                          hintText: "Personnel ID",
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: TextInputType.number,
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(); // Close the dialog
-                          },
-                          child: const Text("Cancel"),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            final personnelId = _controller.text.trim();
-                            if (personnelId.isNotEmpty) {
-                              // Do something with the personnel ID
-                              print("Personnel ID entered: $personnelId");
+            // TextButton(
+            //   onPressed: () {
+            //     showDialog(
+            //       context: context,
+            //       builder: (context) {
+            //         return AlertDialog(
+            //           title: const Text("Enter Personnel ID"),
+            //           content: TextField(
+            //             controller: _controller,
+            //             decoration: const InputDecoration(
+            //               hintText: "Personnel ID",
+            //               border: OutlineInputBorder(),
+            //             ),
+            //             keyboardType: TextInputType.number,
+            //           ),
+            //           actions: [
+            //             TextButton(
+            //               onPressed: () {
+            //                 Navigator.of(context).pop(); // Close the dialog
+            //               },
+            //               child: const Text("Cancel"),
+            //             ),
+            //             TextButton(
+            //               onPressed: () async {
+            //                 final personnelId = _controller.text.trim();
+            //                 if (personnelId.isNotEmpty) {
+            //                   // Do something with the personnel ID
+            //                   print("Personnel ID entered: $personnelId");
 
-                              await FirebaseFirestore.instance
-                                  .collection('Users')
-                                  .doc(personnelId)
-                                  .get()
-                                  .then((DocumentSnapshot documentSnapshot) {
-                                if (documentSnapshot.exists) {
-                                  print('Document exists on the database');
-                                  Navigator.of(context)
-                                      .pushReplacement(MaterialPageRoute(
-                                          builder: (context) => PersonnelScreen(
-                                                id: personnelId,
-                                              )));
-                                } else {
-                                  Navigator.pop(context);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Invalid ID!"),
-                                    ),
-                                  );
-                                }
-                              });
-                            } else {
-                              // Show an error or a message
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content:
-                                      Text("Please enter a valid Personnel ID"),
-                                ),
-                              );
-                            }
-                          },
-                          child: const Text("Confirm"),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              child: TextWidget(
-                text: 'Continue as Personnel',
-                fontSize: 14,
-                color: Colors.white,
-                fontFamily: 'Bold',
-              ),
-            ),
+            //                   await FirebaseFirestore.instance
+            //                       .collection('Users')
+            //                       .doc(personnelId)
+            //                       .get()
+            //                       .then((DocumentSnapshot documentSnapshot) {
+            //                     if (documentSnapshot.exists) {
+            //                       print('Document exists on the database');
+            //                       Navigator.of(context)
+            //                           .pushReplacement(MaterialPageRoute(
+            //                               builder: (context) => PersonnelScreen(
+            //                                     id: personnelId,
+            //                                   )));
+            //                     } else {
+            //                       Navigator.pop(context);
+            //                       ScaffoldMessenger.of(context).showSnackBar(
+            //                         const SnackBar(
+            //                           content: Text("Invalid ID!"),
+            //                         ),
+            //                       );
+            //                     }
+            //                   });
+            //                 } else {
+            //                   // Show an error or a message
+            //                   ScaffoldMessenger.of(context).showSnackBar(
+            //                     const SnackBar(
+            //                       content:
+            //                           Text("Please enter a valid Personnel ID"),
+            //                     ),
+            //                   );
+            //                 }
+            //               },
+            //               child: const Text("Confirm"),
+            //             ),
+            //           ],
+            //         );
+            //       },
+            //     );
+            //   },
+            //   child: TextWidget(
+            //     text: 'Continue as Personnel',
+            //     fontSize: 14,
+            //     color: Colors.white,
+            //     fontFamily: 'Bold',
+            //   ),
+            // ),
           ],
         ),
       ),

@@ -63,11 +63,28 @@ class _FirstTabState extends State<FirstTab> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextWidget(
-                        text:
-                            'Name: ${data.docs[i]['name']},   Sector: ${data.docs[i]['sector']},  ID: ${data.docs[i]['id']}',
-                        fontSize: 18,
-                        color: primary,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextWidget(
+                            text:
+                                'Name: ${data.docs[i]['name']},   Sector: ${data.docs[i]['sector']},  ID: ${data.docs[i]['id']}',
+                            fontSize: 18,
+                            color: primary,
+                          ),
+                          IconButton(
+                            onPressed: () async {
+                              await FirebaseFirestore.instance
+                                  .collection('Users')
+                                  .doc(data.docs[i].id)
+                                  .delete();
+                            },
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ],
                       ),
                       Divider(
                         color: primary,

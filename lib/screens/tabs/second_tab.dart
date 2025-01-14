@@ -63,31 +63,53 @@ class _SecondTabState extends State<SecondTab> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      StreamBuilder<DocumentSnapshot>(
-                          stream: FirebaseFirestore.instance
-                              .collection('Users')
-                              .doc(data.docs[i]['userId'])
-                              .snapshots(),
-                          builder: (context,
-                              AsyncSnapshot<DocumentSnapshot> snapshot) {
-                            if (!snapshot.hasData) {
-                              return const Center(child: Text('Loading'));
-                            } else if (snapshot.hasError) {
-                              return const Center(
-                                  child: Text('Something went wrong'));
-                            } else if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            }
-                            dynamic userData = snapshot.data;
-                            return TextWidget(
-                              text:
-                                  'Personnel Name: ${userData['name']},   Sector: ${userData['sector']}, Vehicle Model: ${data.docs[i]['model']}, Color: ${data.docs[i]['color']}, Plate Number: ${data.docs[i]['platenumber']}',
-                              fontSize: 18,
-                              color: primary,
-                            );
-                          }),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          StreamBuilder<DocumentSnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('Users')
+                                  .doc(data.docs[i]['userId'])
+                                  .snapshots(),
+                              builder: (context,
+                                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+                                if (!snapshot.hasData) {
+                                  return const Center(child: Text('Loading'));
+                                } else if (snapshot.hasError) {
+                                  return const Center(
+                                      child: Text('Something went wrong'));
+                                } else if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                }
+                                dynamic userData = snapshot.data;
+                                return SizedBox(
+                                  width: 600,
+                                  child: TextWidget(
+                                    maxLines: 2,
+                                    align: TextAlign.start,
+                                    text:
+                                        'Personnel Name: ${userData['name']},   Sector: ${userData['sector']}, Vehicle Model: ${data.docs[i]['model']}, Color: ${data.docs[i]['color']}, Plate Number: ${data.docs[i]['platenumber']}',
+                                    fontSize: 18,
+                                    color: primary,
+                                  ),
+                                );
+                              }),
+                          IconButton(
+                            onPressed: () async {
+                              await FirebaseFirestore.instance
+                                  .collection('Vehicles')
+                                  .doc(data.docs[i].id)
+                                  .delete();
+                            },
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ],
+                      ),
                       Divider(
                         color: primary,
                       ),
