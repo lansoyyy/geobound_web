@@ -48,6 +48,7 @@ dependencies:
   printing: ^5.9.3
   url_launcher:
   path_provider:
+  geolocator:
 
 dev_dependencies:
   flutter_test:

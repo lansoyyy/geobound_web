@@ -12,7 +12,7 @@ class FourthTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('Vehicles').snapshots(),
+        stream: FirebaseFirestore.instance.collection('Users').snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             print(snapshot.error);
@@ -44,6 +44,36 @@ class FourthTab extends StatelessWidget {
                       initialZoom: 18,
                     ),
                     children: [
+                      TileLayer(
+                        // Display map tiles from any source
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // OSMF's Tile Server
+                        userAgentPackageName: 'com.example.app',
+                        // And many more recommended properties!
+                      ),
+                      MarkerLayer(markers: [
+                        for (int i = 0; i < data.docs.length; i++)
+                          Marker(
+                            point: LatLng(
+                                data.docs[i]['lat'], data.docs[i]['lng']),
+                            child: Container(
+                              width: 25,
+                              height: 25,
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: TextWidget(
+                                  text: data.docs[i]['name'][0],
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                  fontFamily: 'Bold',
+                                ),
+                              ),
+                            ),
+                          ),
+                      ]),
                       PolygonLayer(
                         polygons: [
                           Polygon(
@@ -72,41 +102,12 @@ class FourthTab extends StatelessWidget {
                                 const LatLng(8.482212, 124.660751),
                                 const LatLng(8.482161, 124.660616),
                               ],
-                              color: Colors.blue[200],
-                              borderColor: Colors.black38,
+                              color: Colors.red.withOpacity(0.2),
+                              borderColor: Colors.black,
+                              borderStrokeWidth: 2,
                               isFilled: true),
                         ],
                       ),
-                      TileLayer(
-                        // Display map tiles from any source
-                        urlTemplate:
-                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // OSMF's Tile Server
-                        userAgentPackageName: 'com.example.app',
-                        // And many more recommended properties!
-                      ),
-                      MarkerLayer(markers: [
-                        for (int i = 0; i < data.docs.length; i++)
-                          Marker(
-                            point: LatLng(
-                                data.docs[i]['lat'], data.docs[i]['long']),
-                            child: Container(
-                              width: 25,
-                              height: 25,
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: TextWidget(
-                                  text: '${i + 1}',
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                  fontFamily: 'Bold',
-                                ),
-                              ),
-                            ),
-                          ),
-                      ])
                     ],
                   ),
                 ),

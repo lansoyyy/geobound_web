@@ -14,6 +14,8 @@ Future addUser(name, number, rfid, address, sector, email, type) async {
     'email': email,
     'dateTime': DateTime.now(),
     'type': type,
+    'lat': 0,
+    'lng': 0,
   };
 
   await docUser.set(json);
