@@ -6,6 +6,7 @@ import 'package:geobound_web/screens/tabs/fourth_tab.dart';
 import 'package:geobound_web/screens/tabs/report_tab.dart';
 import 'package:geobound_web/screens/tabs/second_tab.dart';
 import 'package:geobound_web/screens/tabs/third_tab.dart';
+import 'package:geobound_web/services/add_user.dart';
 import 'package:geobound_web/services/add_vehicle.dart';
 import 'package:geobound_web/utils/colors.dart';
 import 'package:geobound_web/widgets/logout_widget.dart';
@@ -32,14 +33,18 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: index == 1
+      floatingActionButton: index == 1 || index == 0
           ? FloatingActionButton(
               child: const Icon(
                 Icons.add,
                 color: Colors.black,
               ),
               onPressed: () {
-                createDialog(false);
+                if (index == 0) {
+                  createDialog1(false);
+                } else {
+                  createDialog(false);
+                }
               },
             )
           : null,
@@ -278,6 +283,109 @@ class _HomeScreenState extends State<HomeScreen> {
                   showToast('Please select the personnel!');
                 }
                 // Handle saving the new employee's information here
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  final TextEditingController fullnameController = TextEditingController();
+
+  final TextEditingController rfidController = TextEditingController();
+
+  final TextEditingController contactController = TextEditingController();
+
+  final TextEditingController addressController = TextEditingController();
+
+  final TextEditingController sectorController = TextEditingController();
+
+  createDialog1(bool inUpdate) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+              inUpdate ? 'Update Employee Details' : 'Create New Employee'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: fullnameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Fullname',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: rfidController,
+                  decoration: const InputDecoration(
+                    labelText: 'ID Number',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: contactController,
+                  decoration: const InputDecoration(
+                    labelText: 'Contact No.',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.phone,
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: addressController,
+                  decoration: const InputDecoration(
+                    labelText: 'Address',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: sectorController,
+                  decoration: const InputDecoration(
+                    labelText: 'Assigned Sector',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                // await FirebaseFirestore.instance
+                //     .collection('Users')
+                //     .doc(data.id)
+                //     .update({
+                //   'name': fullnameController.text,
+                //   'number': contactController.text,
+                //   'address': addressController.text,
+                //   'id': rfidController.text,
+                //   'sector': sectorController.text
+                // });
+                // // Handle saving the new employee's information here
+                addUser(
+                    fullnameController.text,
+                    contactController.text,
+                    rfidController.text,
+                    addressController.text,
+                    sectorController.text,
+                    '',
+                    'Personnel');
+                Navigator.of(context).pop();
               },
               child: const Text('Save'),
             ),

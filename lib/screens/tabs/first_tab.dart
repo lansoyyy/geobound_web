@@ -4,9 +4,14 @@ import 'package:geobound_web/utils/colors.dart';
 import 'package:geobound_web/widgets/button_widget.dart';
 import 'package:geobound_web/widgets/text_widget.dart';
 
-class FirstTab extends StatelessWidget {
+class FirstTab extends StatefulWidget {
   const FirstTab({super.key});
 
+  @override
+  State<FirstTab> createState() => _FirstTabState();
+}
+
+class _FirstTabState extends State<FirstTab> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
