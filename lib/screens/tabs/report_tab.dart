@@ -1,16 +1,8 @@
-import 'dart:html' as html if (dart.library.io) 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geobound_web/utils/colors.dart';
 import 'package:geobound_web/widgets/text_widget.dart';
-import 'package:intl/intl.dart' show DateFormat, toBeginningOfSentenceCase;
-import 'package:intl/intl.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 
 class ReportTab extends StatefulWidget {
   const ReportTab({super.key});
@@ -55,14 +47,6 @@ class _ReportTabState extends State<ReportTab> {
   Widget build(BuildContext context) {
     return hasLoaded
         ? Scaffold(
-            floatingActionButton: FloatingActionButton(
-              child: const Icon(
-                Icons.save,
-              ),
-              onPressed: () {
-                generatePdf(reports);
-              },
-            ),
             body: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
@@ -104,35 +88,41 @@ class _ReportTabState extends State<ReportTab> {
                                     return element['id'] ==
                                         itemList[i]['ID'].toString();
                                   },
-                                ).isEmpty ? '' : users.where(
-                                  (element) {
-                                    return element['id'] ==
-                                        itemList[i]['ID'].toString();
-                                  },
-                                ).first['name'],
+                                ).isEmpty
+                                    ? ''
+                                    : users.where(
+                                        (element) {
+                                          return element['id'] ==
+                                              itemList[i]['ID'].toString();
+                                        },
+                                      ).first['name'],
                                 'number': users.where(
                                   (element) {
                                     return element['id'] ==
                                         itemList[i]['ID'].toString();
                                   },
-                                ).isEmpty ? '' : users.where(
-                                  (element) {
-                                    return element['id'] ==
-                                        itemList[i]['ID'].toString();
-                                  },
-                                ).first['number'],
+                                ).isEmpty
+                                    ? ''
+                                    : users.where(
+                                        (element) {
+                                          return element['id'] ==
+                                              itemList[i]['ID'].toString();
+                                        },
+                                      ).first['number'],
                                 'id': itemList[i]['ID'].toString(),
                                 'type': users.where(
                                   (element) {
                                     return element['id'] ==
                                         itemList[i]['ID'].toString();
                                   },
-                                ).isEmpty ? '' : users.where(
-                                  (element) {
-                                    return element['id'] ==
-                                        itemList[i]['ID'].toString();
-                                  },
-                                ).first['type'],
+                                ).isEmpty
+                                    ? ''
+                                    : users.where(
+                                        (element) {
+                                          return element['id'] ==
+                                              itemList[i]['ID'].toString();
+                                        },
+                                      ).first['type'],
                               });
                             }
 
@@ -194,16 +184,19 @@ class _ReportTabState extends State<ReportTab> {
                                       DataCell(
                                         TextWidget(
                                           text: users.where(
-                                  (element) {
-                                    return element['id'] ==
-                                        itemList[i]['ID'].toString();
-                                  },
-                                ).isEmpty ? '' : users.where(
-                                  (element) {
-                                    return element['id'] ==
-                                        itemList[i]['ID'].toString();
-                                  },
-                                ).first['name'],
+                                            (element) {
+                                              return element['id'] ==
+                                                  itemList[i]['ID'].toString();
+                                            },
+                                          ).isEmpty
+                                              ? ''
+                                              : users.where(
+                                                  (element) {
+                                                    return element['id'] ==
+                                                        itemList[i]['ID']
+                                                            .toString();
+                                                  },
+                                                ).first['name'],
                                           fontSize: 14,
                                           fontFamily: 'Medium',
                                           color: Colors.grey,
@@ -211,7 +204,12 @@ class _ReportTabState extends State<ReportTab> {
                                       ),
                                       DataCell(
                                         TextWidget(
-                                          text: itemList[i]['Timestamp'].toString().split(' ')[1] == 'PM' ? '' : itemList[i]['Timestamp'],
+                                          text: itemList[i]['Timestamp']
+                                                      .toString()
+                                                      .split(' ')[1] ==
+                                                  'PM'
+                                              ? ''
+                                              : itemList[i]['Timestamp'],
                                           fontSize: 14,
                                           fontFamily: 'Medium',
                                           color: Colors.grey,
@@ -219,7 +217,12 @@ class _ReportTabState extends State<ReportTab> {
                                       ),
                                       DataCell(
                                         TextWidget(
-                                         text: itemList[i]['Timestamp'].toString().split(' ')[1] != 'PM' ? '' : itemList[i]['Timestamp'],
+                                          text: itemList[i]['Timestamp']
+                                                      .toString()
+                                                      .split(' ')[1] !=
+                                                  'PM'
+                                              ? ''
+                                              : itemList[i]['Timestamp'],
                                           fontSize: 14,
                                           fontFamily: 'Medium',
                                           color: Colors.grey,
@@ -261,104 +264,5 @@ class _ReportTabState extends State<ReportTab> {
         : const Center(
             child: CircularProgressIndicator(),
           );
-  }
-
-  void generatePdf(List tableDataList) async {
-   
-    final pdf = pw.Document(
-      pageMode: PdfPageMode.fullscreen,
-    );
-    List<String> tableHeaders = [
-      'ID',
-      'Name',
-      'Contact Number',
-      'Date',
-      'Time In',
-      'Time Out',
-      'Visitor/Personnel'
-    ];
-
-    String cdate2 = DateFormat("MMMM dd, yyyy").format(DateTime.now());
-
-    List<List<String>> tableData = [];
-    for (var i = 0; i < tableDataList.length; i++) {
-      tableData.add([
-        tableDataList[i]['id'],
-        tableDataList[i]['name'],
-        tableDataList[i]['number'],
-        DateFormat('yyyy-MM-dd').format(DateTime.now()),
-        tableDataList[i]['timein'],
-        'N/A',
-        tableDataList[i]['type'],
-      ]);
-    }
-
-    pdf.addPage(
-      pw.MultiPage(
-        pageFormat: PdfPageFormat.a3,
-        orientation: pw.PageOrientation.landscape,
-        build: (context) => [
-          pw.Align(
-            alignment: pw.Alignment.center,
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.center,
-              children: [
-                pw.Text('GEOBOUND',
-                    style: const pw.TextStyle(
-                      fontSize: 18,
-                    )),
-                pw.SizedBox(height: 10),
-                pw.Text(
-                  style: const pw.TextStyle(
-                    fontSize: 15,
-                  ),
-                  'Reports',
-                ),
-                pw.SizedBox(height: 5),
-                pw.Text(
-                  style: const pw.TextStyle(
-                    fontSize: 10,
-                  ),
-                  cdate2,
-                ),
-              ],
-            ),
-          ),
-          pw.SizedBox(height: 20),
-          pw.Table.fromTextArray(
-            headers: tableHeaders,
-            data: tableData,
-            headerDecoration: const pw.BoxDecoration(),
-            rowDecoration: const pw.BoxDecoration(),
-            headerHeight: 25,
-            cellHeight: 45,
-            cellAlignments: {
-              0: pw.Alignment.centerLeft,
-              1: pw.Alignment.center,
-            },
-          ),
-          pw.SizedBox(height: 20),
-        ],
-      ),
-    );
-
-final Uint8List pdfBytes = await pdf.save();
-
-// Share the PDF using the Printing package
-await Printing.sharePdf(
-  bytes: pdfBytes,
-  filename: 'report.pdf',
-);
-
-// Optional: Handle the PDF bytes for web
-if (kIsWeb) {
-  final blob = html.Blob([pdfBytes]);
-  final url = html.Url.createObjectUrlFromBlob(blob);
-  final anchor = html.AnchorElement(href: url)
-    ..target = 'blank'
-    ..download = 'report.pdf'
-    ..click();
-  html.Url.revokeObjectUrl(url);
-}
   }
 }

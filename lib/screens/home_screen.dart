@@ -28,7 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
     'Vehicles',
     'Logged Entry/Exit',
     'Monitor\nRealtime Status',
-    'Generate Reports'
   ];
   @override
   Widget build(BuildContext context) {
