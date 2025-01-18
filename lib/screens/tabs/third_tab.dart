@@ -1,7 +1,6 @@
 import 'dart:html' as html if (dart.library.io) 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geobound_web/utils/colors.dart';
@@ -52,6 +51,8 @@ class _ThirdTabState extends State<ThirdTab> {
   
     List reports = [];
 
+     String selectedValue = "In";
+
   @override
   Widget build(BuildContext context) {
     return hasLoaded
@@ -70,204 +71,200 @@ class _ThirdTabState extends State<ThirdTab> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  TextWidget(
-                    text: 'Logged Entry/Exit Status',
-                    fontSize: 24,
-                    color: primary,
-                    fontFamily: 'Bold',
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextWidget(
+                        text: 'Logged Entry/Exit Status',
+                        fontSize: 24,
+                        color: primary,
+                        fontFamily: 'Bold',
+                      ),Row(
+                        children: [
+                           TextWidget(
+                        text: 'Type: ',
+                        fontSize: 24,
+                        color: primary,
+                        fontFamily: 'Bold',
+                      ),
+                      const SizedBox(width: 10,),
+                          DropdownButton<String>(
+                                    value: selectedValue,
+                                    items: <String>["In", "Out"].map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child:  TextWidget(
+                        text: value,
+                        fontSize: 18,
+                        color: primary,
+                        fontFamily: 'Bold',
+                      ),
+                                      );
+                                    }).toList(),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        selectedValue = newValue!;
+                                      });
+                                    },
+                                  ),
+                        ],
+                      ),
+                    ],
                   ),
                   const SizedBox(
                     height: 20,
                   ),
-                  StreamBuilder<DatabaseEvent>(
-                      stream:
-                          FirebaseDatabase.instance.ref("rfid_data").onValue,
-                      builder: (context, snapshot) {
-                        print(snapshot.data);
-                        if (snapshot.hasError) {
-                          return const Center(child: Text('Error'));
-                        }
-                        // if (snapshot.connectionState == ConnectionState.waiting) {
-                        //   final data = snapshot.data!.snapshot.value!;
-                        //   print('data here $data');
-                        //   return const Center(child: CircularProgressIndicator());
-                        // }
+                  StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('Records')
+          .where('type', isEqualTo: selectedValue)
+          .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              print(snapshot.error);
+              return const Center(child: Text('Error'));
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Padding(
+                padding: EdgeInsets.only(top: 50),
+                child: Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.black,
+                )),
+              );
+            }
 
-                        if (snapshot.hasData) {
-                          final data = snapshot.data!.snapshot.value!;
-
-                          print('data here $data');
-
-                          // Convert dynamic data to a list of maps
-                          if (data != {}) {
-                            final Map<dynamic, dynamic> dataMap =
-                                data as Map<dynamic, dynamic>;
-                            final List<Map<String, dynamic>> itemList =
-                                dataMap.values.map((innerValue) {
-                              return {
-                                "Date": innerValue["Date"],
-                                "ID": innerValue["ID"],
-                                "Timestamp": innerValue["Timestamp"],
-                              };
-                            }).toList();
-
-                            for (int i = 0; i < data.length; i++) {
-                              reports.add({
-                                'timein': itemList[i]['Timestamp'],
-                                'name': users.where(
-                                  (element) {
-                                    return element['id'] ==
-                                        itemList[i]['ID'].toString();
-                                  },
-                                ).isEmpty ? '' : users.where(
-                                  (element) {
-                                    return element['id'] ==
-                                        itemList[i]['ID'].toString();
-                                  },
-                                ).first['name'],
-                                'number': users.where(
-                                  (element) {
-                                    return element['id'] ==
-                                        itemList[i]['ID'].toString();
-                                  },
-                                ).isEmpty ? '' : users.where(
-                                  (element) {
-                                    return element['id'] ==
-                                        itemList[i]['ID'].toString();
-                                  },
-                                ).first['number'],
-                                'id': itemList[i]['ID'].toString(),
-                                'type': users.where(
-                                  (element) {
-                                    return element['id'] ==
-                                        itemList[i]['ID'].toString();
-                                  },
-                                ).isEmpty ? '' : users.where(
-                                  (element) {
-                                    return element['id'] ==
-                                        itemList[i]['ID'].toString();
-                                  },
-                                ).first['type'],
-                              });
-                            }
-                            return Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1), // Outer border
-                              ),
-                              child: DataTable(
-                                columns: [
-                                  DataColumn(
-                                    label: TextWidget(
-                                      text: 'Personnel ID Number',
-                                      fontSize: 18,
-                                      fontFamily: 'Bold',
-                                      color: primary,
-                                    ),
+            final data = snapshot.requireData;
+                      return Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Colors.grey,
+                                        width: 1), // Outer border
                                   ),
-                                  DataColumn(
-                                    label: TextWidget(
-                                      text: 'Name',
-                                      fontSize: 18,
-                                      fontFamily: 'Bold',
-                                      color: primary,
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: TextWidget(
-                                      text: 'Entry Time',
-                                      fontSize: 18,
-                                      fontFamily: 'Bold',
-                                      color: primary,
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: TextWidget(
-                                      text: 'Exit Time',
-                                      fontSize: 18,
-                                      fontFamily: 'Bold',
-                                      color: primary,
-                                    ),
-                                  ),
-                                ],
-                                rows: [
-                                  for (int i = 0; i < data.length; i++)
-                                    DataRow(cells: [
-                                      DataCell(
-                                        TextWidget(
-                                          text: itemList[i]['ID'].toString(),
-                                          fontSize: 14,
-                                          fontFamily: 'Medium',
-                                          color: Colors.grey,
+                                  child: DataTable(
+                                    columns: [
+                                      DataColumn(
+                                        label: TextWidget(
+                                          text: 'Personnel ID Number',
+                                          fontSize: 18,
+                                          fontFamily: 'Bold',
+                                          color: primary,
                                         ),
                                       ),
-                                      DataCell(
-                                        TextWidget(
-                                          text: users.where(
-                                            (element) {
-                                              return element['id'] ==
-                                                  itemList[i]['ID'].toString();
-                                            },
-                                          ).isNotEmpty
-                                              ? users.where(
-                                                  (element) {
-                                                    return element['id'] ==
-                                                        itemList[i]['ID']
-                                                            .toString();
-                                                  },
-                                                ).first['name']
-                                              : '',
-                                          fontSize: 14,
-                                          fontFamily: 'Medium',
-                                          color: Colors.grey,
+                                      DataColumn(
+                                        label: TextWidget(
+                                          text: 'Name',
+                                          fontSize: 18,
+                                          fontFamily: 'Bold',
+                                          color: primary,
                                         ),
                                       ),
-                                      DataCell(
-                                        TextWidget(
-                                          text: itemList[i]['Timestamp']
-                                                      .toString()
-                                                      .split(' ')[1] ==
-                                                  'PM'
-                                              ? ''
-                                              : itemList[i]['Timestamp'] ?? '',
-                                          fontSize: 14,
-                                          fontFamily: 'Medium',
-                                          color: Colors.grey,
+                                      DataColumn(
+                                        label: TextWidget(
+                                          text: 'Entry Time',
+                                          fontSize: 18,
+                                          fontFamily: 'Bold',
+                                          color: primary,
                                         ),
                                       ),
-                                      DataCell(
-                                        TextWidget(
-                                          text: itemList[i]['Timestamp']
-                                                      .toString()
-                                                      .split(' ')[1] !=
-                                                  'PM'
-                                              ? ''
-                                              : itemList[i]['Timestamp'] ?? '',
-                                          fontSize: 14,
-                                          fontFamily: 'Medium',
-                                          color: Colors.grey,
+                                      DataColumn(
+                                        label: TextWidget(
+                                          text: 'Type',
+                                          fontSize: 18,
+                                          fontFamily: 'Bold',
+                                          color: primary,
                                         ),
                                       ),
-                                    ])
-                                ],
-                                // DataTable's properties to add inner horizontal and vertical dividers
-                                dividerThickness:
-                                    1, // Horizontal dividers between rows
-                                border: const TableBorder(
-                                  horizontalInside: BorderSide(
-                                      color: Colors.grey,
-                                      width: 1), // Horizontal dividers
-                                  verticalInside: BorderSide(
-                                      color: Colors.grey,
-                                      width: 1), // Vertical dividers
-                                ),
-                              ),
-                            );
-                          }
-                        }
-                        return const Center(child: Text('No data found'));
-                      })
+                                    ],
+                                    rows: [
+                                      for (int i = 0; i < data.docs.length; i++)
+                                        DataRow(cells: [
+                                          DataCell(
+                                            TextWidget(
+                                              text: data.docs[i]['userId'],
+                                              fontSize: 14,
+                                              fontFamily: 'Medium',
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          DataCell(
+                                            StreamBuilder<DocumentSnapshot>(
+                                stream: FirebaseFirestore.instance
+                                    .collection('Users')
+                                    .doc(data.docs[i]['userId'])
+                                    .snapshots(),
+                                builder: (context,
+                                    AsyncSnapshot<DocumentSnapshot> snapshot) {
+
+                                  if (!snapshot.hasData) {
+                                    return const Center(child: Text('Loading'));
+                                  } else if (snapshot.hasError) {
+                                    return const Center(
+                                        child: Text('Something went wrong'));
+                                  } else if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  }
+                                  dynamic userData = snapshot.data;
+
+                                  
+                                      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                                        reports.clear();
+                                        reports.add({
+                                          'id': data.docs[i]['userId'],
+                                           'name': userData['name'],
+                                            'number': userData['number'],
+                                             'type': data.docs[i]['type'],
+                                              'timein': DateFormat.yMMMd()
+                                    .add_jm()
+                                    .format(data.docs[i]['dateTime'].toDate()),
+                                        });
+                                      },);
+                                                return TextWidget(
+                                                  text: userData['name'],
+                                                  fontSize: 14,
+                                                  fontFamily: 'Medium',
+                                                  color: Colors.grey,
+                                                );
+                                              }
+                                            ),
+                                          ),
+                                          DataCell(
+                                            TextWidget(
+                                              text: DateFormat.yMMMd()
+                                    .add_jm()
+                                    .format(data.docs[i]['dateTime'].toDate()),
+                                              fontSize: 14,
+                                              fontFamily: 'Medium',
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          DataCell(
+                                            TextWidget(
+                                              text: data.docs[i]['type'],
+                                              fontSize: 14,
+                                              fontFamily: 'Medium',
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ])
+                                    ],
+                                    // DataTable's properties to add inner horizontal and vertical dividers
+                                    dividerThickness:
+                                        1, // Horizontal dividers between rows
+                                    border: const TableBorder(
+                                      horizontalInside: BorderSide(
+                                          color: Colors.grey,
+                                          width: 1), // Horizontal dividers
+                                      verticalInside: BorderSide(
+                                          color: Colors.grey,
+                                          width: 1), // Vertical dividers
+                                    ),
+                                  ),
+                                );
+                    }
+                  ),
                 ],
               ),
             ),
@@ -285,9 +282,9 @@ class _ThirdTabState extends State<ThirdTab> {
       'ID',
       'Name',
       'Contact Number',
-      'Date',
+      
       'Time In',
-      'Time Out',
+      
       'Visitor/Personnel'
     ];
 
@@ -299,9 +296,9 @@ class _ThirdTabState extends State<ThirdTab> {
         tableDataList[i]['id'],
         tableDataList[i]['name'],
         tableDataList[i]['number'],
-        DateFormat('yyyy-MM-dd').format(DateTime.now()),
+       
         tableDataList[i]['timein'],
-        'N/A',
+        
         tableDataList[i]['type'],
       ]);
     }
