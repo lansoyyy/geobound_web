@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geobound_web/utils/colors.dart';
+import 'package:geobound_web/utils/const.dart';
 import 'package:geobound_web/widgets/text_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
@@ -268,12 +269,22 @@ class FourthTab extends StatelessWidget {
                                       ),
                                     ),
                                     DataCell(
-                                      TextWidget(
-                                        text: 'Present',
-                                        fontSize: 14,
-                                        fontFamily: 'Medium',
-                                        color: Colors.grey,
-                                      ),
+                                      Builder(builder: (context) {
+                                        LatLng pointToCheck = LatLng(
+                                            data.docs[i]['lat'],
+                                            data.docs[i]['lng']);
+                                        final bool isInside = isPointInPolygon(
+                                            pointToCheck, polygon);
+
+                                        return TextWidget(
+                                          text: isInside
+                                              ? 'Present'
+                                              : 'Not Present',
+                                          fontSize: 14,
+                                          fontFamily: 'Medium',
+                                          color: Colors.grey,
+                                        );
+                                      }),
                                     ),
                                   ])
                               ],
