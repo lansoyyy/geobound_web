@@ -30,129 +30,296 @@ class FourthTab extends StatelessWidget {
           }
 
           final data = snapshot.requireData;
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 750,
-                  height: 450,
-                  child: FlutterMap(
-                    options: const MapOptions(
-                      initialCenter: LatLng(
-                          8.480675, 124.660238), // Center the map over London
-                      initialZoom: 18,
-                    ),
+          return StreamBuilder<QuerySnapshot>(
+              stream:
+                  FirebaseFirestore.instance.collection('Vehicles').snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                  return const Center(child: Text('Error'));
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Padding(
+                    padding: EdgeInsets.only(top: 50),
+                    child: Center(
+                        child: CircularProgressIndicator(
+                      color: Colors.black,
+                    )),
+                  );
+                }
+
+                final vehicleData = snapshot.requireData;
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      TileLayer(
-                        // Display map tiles from any source
-                        urlTemplate:
-                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // OSMF's Tile Server
-                        userAgentPackageName: 'com.example.app',
-                        // And many more recommended properties!
-                      ),
-                      MarkerLayer(markers: [
-                        for (int i = 0; i < data.docs.length; i++)
-                          Marker(
-                            point: LatLng(
-                                data.docs[i]['lat'], data.docs[i]['lng']),
-                            child: Container(
-                              width: 25,
-                              height: 25,
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
+                      SizedBox(
+                        width: 750,
+                        height: 450,
+                        child: Stack(
+                          children: [
+                            FlutterMap(
+                              options: const MapOptions(
+                                initialCenter: LatLng(8.480675,
+                                    124.660238), // Center the map over London
+                                initialZoom: 18,
                               ),
-                              child: Center(
-                                child: TextWidget(
-                                  text:
-                                      '${data.docs[i]['name'][0]}${data.docs[i]['name'][1]}${data.docs[i]['name'][2]}',
-                                  fontSize: 12,
-                                  color: Colors.white,
+                              children: [
+                                TileLayer(
+                                  // Display map tiles from any source
+                                  urlTemplate:
+                                      'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // OSMF's Tile Server
+                                  userAgentPackageName: 'com.example.app',
+                                  // And many more recommended properties!
+                                ),
+                                MarkerLayer(markers: [
+                                  for (int i = 0; i < data.docs.length; i++)
+                                    Marker(
+                                      point: LatLng(data.docs[i]['lat'],
+                                          data.docs[i]['lng']),
+                                      child: Container(
+                                        width: 25,
+                                        height: 25,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.red,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: TextWidget(
+                                            text:
+                                                '${data.docs[i]['name'][0]}${data.docs[i]['name'][1]}${data.docs[i]['name'][2]}',
+                                            fontSize: 12,
+                                            color: Colors.white,
+                                            fontFamily: 'Bold',
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  for (int i = 0;
+                                      i < vehicleData.docs.length;
+                                      i++)
+                                    Marker(
+                                      width: 50,
+                                      point: LatLng(vehicleData.docs[i]['lat'],
+                                          vehicleData.docs[i]['long']),
+                                      child: Container(
+                                        decoration: const BoxDecoration(
+                                          color: Colors.blue,
+                                          shape: BoxShape.rectangle,
+                                        ),
+                                        child: Center(
+                                          child: TextWidget(
+                                            text:
+                                                '${vehicleData.docs[i]['platenumber']}',
+                                            fontSize: 12,
+                                            color: Colors.white,
+                                            fontFamily: 'Bold',
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ]),
+                                PolygonLayer(
+                                  polygons: [
+                                    Polygon(
+                                        points: [
+                                          const LatLng(8.482386, 124.660703),
+                                          const LatLng(8.482260, 124.660365),
+                                          const LatLng(8.481648, 124.660055),
+                                          const LatLng(8.481202, 124.659958),
+                                          const LatLng(8.480607, 124.659869),
+                                          const LatLng(8.480215, 124.659576),
+                                          const LatLng(8.479867, 124.659387),
+                                          const LatLng(8.479635, 124.659260),
+                                          const LatLng(8.479411, 124.659815),
+                                          const LatLng(8.480161, 124.660293),
+                                          const LatLng(8.480991, 124.660573),
+                                          const LatLng(8.480714, 124.661805),
+                                          const LatLng(8.480902, 124.661981),
+                                          const LatLng(8.481415, 124.662026),
+                                          const LatLng(8.481700, 124.661579),
+                                          const LatLng(8.481852, 124.661223),
+                                          const LatLng(8.482227, 124.660812),
+                                          const LatLng(8.482386, 124.660703),
+                                        ],
+                                        color: Colors.red.withOpacity(0.2),
+                                        borderColor: Colors.black,
+                                        borderStrokeWidth: 2,
+                                        isFilled: true),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Align(
+                                alignment: Alignment.bottomRight,
+                                child: Container(
+                                  width: 180,
+                                  height: 135,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.9),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        TextWidget(
+                                          text: 'Map Legend',
+                                          fontSize: 18,
+                                          color: Colors.black,
+                                          fontFamily: 'Bold',
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              width: 15,
+                                              height: 15,
+                                              decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 5,
+                                            ),
+                                            TextWidget(
+                                              text: 'Personnel',
+                                              fontSize: 14,
+                                              color: Colors.black,
+                                              fontFamily: 'Medium',
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              width: 15,
+                                              height: 15,
+                                              decoration: const BoxDecoration(
+                                                shape: BoxShape.rectangle,
+                                                color: Colors.blue,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 5,
+                                            ),
+                                            TextWidget(
+                                              text: 'Vehicles',
+                                              fontSize: 14,
+                                              color: Colors.black,
+                                              fontFamily: 'Medium',
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              width: 15,
+                                              height: 15,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.black,
+                                                    width: 1),
+                                                shape: BoxShape.rectangle,
+                                                color:
+                                                    Colors.red.withOpacity(0.2),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 5,
+                                            ),
+                                            TextWidget(
+                                              text: 'Geofencing Area',
+                                              fontSize: 14,
+                                              color: Colors.black,
+                                              fontFamily: 'Medium',
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Card(
+                            color: Colors.amber,
+                            child: SizedBox(
+                              width: 200,
+                              child: ListTile(
+                                onTap: () {
+                                  showDetailDialog(context);
+                                },
+                                title: TextWidget(
+                                  text: 'Personnel',
+                                  fontSize: 18,
                                   fontFamily: 'Bold',
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
                           ),
-                      ]),
-                      PolygonLayer(
-                        polygons: [
-                          Polygon(
-                              points: [
-                                const LatLng(8.482386, 124.660703),
-                                const LatLng(8.482260, 124.660365),
-                                const LatLng(8.481648, 124.660055),
-                                const LatLng(8.481202, 124.659958),
-                                const LatLng(8.480607, 124.659869),
-                                const LatLng(8.480215, 124.659576),
-                                const LatLng(8.479867, 124.659387),
-                                const LatLng(8.479635, 124.659260),
-                                const LatLng(8.479411, 124.659815),
-                                const LatLng(8.480161, 124.660293),
-                                const LatLng(8.480991, 124.660573),
-                                const LatLng(8.480714, 124.661805),
-                                const LatLng(8.480902, 124.661981),
-                                const LatLng(8.481415, 124.662026),
-                                const LatLng(8.481700, 124.661579),
-                                const LatLng(8.481852, 124.661223),
-                                const LatLng(8.482227, 124.660812),
-                                const LatLng(8.482386, 124.660703),
-                              ],
-                              color: Colors.red.withOpacity(0.2),
-                              borderColor: Colors.black,
-                              borderStrokeWidth: 2,
-                              isFilled: true),
+                          Card(
+                            color: Colors.amber,
+                            child: SizedBox(
+                              width: 200,
+                              child: ListTile(
+                                onTap: () {
+                                  showDetailDialog1(context);
+                                },
+                                title: TextWidget(
+                                  text: 'Vehicles',
+                                  fontSize: 18,
+                                  fontFamily: 'Bold',
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Card(
-                      color: Colors.amber,
-                      child: SizedBox(
-                        width: 200,
-                        child: ListTile(
-                          onTap: () {
-                            showDetailDialog(context);
-                          },
-                          title: TextWidget(
-                            text: 'Personnel',
-                            fontSize: 18,
-                            fontFamily: 'Bold',
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Card(
-                      color: Colors.amber,
-                      child: SizedBox(
-                        width: 200,
-                        child: ListTile(
-                          onTap: () {
-                            showDetailDialog1(context);
-                          },
-                          title: TextWidget(
-                            text: 'Vehicles',
-                            fontSize: 18,
-                            fontFamily: 'Bold',
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
+                );
+              });
         });
   }
 
@@ -424,12 +591,46 @@ class FourthTab extends StatelessWidget {
                                       ),
                                     ),
                                     DataCell(
-                                      TextWidget(
-                                        text: 'Standby',
-                                        fontSize: 14,
-                                        fontFamily: 'Medium',
-                                        color: Colors.grey,
-                                      ),
+                                      StreamBuilder<QuerySnapshot>(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('Records')
+                                              .where('userId',
+                                                  isEqualTo: data.docs[i]
+                                                      ['userId'])
+                                              .snapshots(),
+                                          builder: (BuildContext context,
+                                              AsyncSnapshot<QuerySnapshot>
+                                                  snapshot) {
+                                            if (snapshot.hasError) {
+                                              print(snapshot.error);
+                                              return const Center(
+                                                  child: Text('Error'));
+                                            }
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 50),
+                                                child: Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                  color: Colors.black,
+                                                )),
+                                              );
+                                            }
+
+                                            final recordData =
+                                                snapshot.requireData;
+                                            return TextWidget(
+                                              text: recordData.docs.isEmpty
+                                                  ? 'N/A'
+                                                  : recordData
+                                                      .docs.first['type'],
+                                              fontSize: 14,
+                                              fontFamily: 'Medium',
+                                              color: Colors.grey,
+                                            );
+                                          }),
                                     ),
                                   ])
                               ],
