@@ -34,64 +34,66 @@ class _FirstTabState extends State<FirstTab> {
           final data = snapshot.requireData;
           return Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                TextWidget(
-                  text: 'Numbers of Personnel Inside the Area:',
-                  fontSize: 24,
-                  color: primary,
-                  fontFamily: 'Bold',
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                ButtonWidget(
-                  radius: 5,
-                  fontSize: 24,
-                  color: primary!,
-                  textColor: Colors.white,
-                  label: data.docs.length.toString(),
-                  onPressed: () {},
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                for (int i = 0; i < data.docs.length; i++)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextWidget(
-                            text:
-                                'Name: ${data.docs[i]['name']},   Sector: ${data.docs[i]['sector']},  ID: ${data.docs[i]['id']}',
-                            fontSize: 18,
-                            color: primary,
-                          ),
-                          IconButton(
-                            onPressed: () async {
-                              await FirebaseFirestore.instance
-                                  .collection('Users')
-                                  .doc(data.docs[i].id)
-                                  .delete();
-                            },
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Divider(
-                        color: primary,
-                      ),
-                    ],
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  TextWidget(
+                    text: 'Numbers of Personnel Inside the Area:',
+                    fontSize: 24,
+                    color: primary,
+                    fontFamily: 'Bold',
                   ),
-              ],
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ButtonWidget(
+                    radius: 5,
+                    fontSize: 24,
+                    color: primary!,
+                    textColor: Colors.white,
+                    label: data.docs.length.toString(),
+                    onPressed: () {},
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  for (int i = 0; i < data.docs.length; i++)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextWidget(
+                              text:
+                                  'Name: ${data.docs[i]['name']},   Sector: ${data.docs[i]['sector']},  ID: ${data.docs[i]['id']}',
+                              fontSize: 18,
+                              color: primary,
+                            ),
+                            IconButton(
+                              onPressed: () async {
+                                await FirebaseFirestore.instance
+                                    .collection('Users')
+                                    .doc(data.docs[i].id)
+                                    .delete();
+                              },
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Divider(
+                          color: primary,
+                        ),
+                      ],
+                    ),
+                ],
+              ),
             ),
           );
         });
