@@ -145,7 +145,7 @@ class _ThirdTabState extends State<ThirdTab> {
                                     columns: [
                                       DataColumn(
                                         label: TextWidget(
-                                          text: 'Personnel ID Number',
+                                          text: 'Personnel\nID Number',
                                           fontSize: 18,
                                           fontFamily: 'Bold',
                                           color: primary,
@@ -170,6 +170,22 @@ class _ThirdTabState extends State<ThirdTab> {
                                       DataColumn(
                                         label: TextWidget(
                                           text: 'Type',
+                                          fontSize: 18,
+                                          fontFamily: 'Bold',
+                                          color: primary,
+                                        ),
+                                      ),
+                                        DataColumn(
+                                        label: TextWidget(
+                                          text: 'Vehicle',
+                                          fontSize: 18,
+                                          fontFamily: 'Bold',
+                                          color: primary,
+                                        ),
+                                      ),
+                                        DataColumn(
+                                        label: TextWidget(
+                                          text: 'Plate\nNumber',
                                           fontSize: 18,
                                           fontFamily: 'Bold',
                                           color: primary,
@@ -246,6 +262,68 @@ class _ThirdTabState extends State<ThirdTab> {
                                               fontSize: 14,
                                               fontFamily: 'Medium',
                                               color: Colors.grey,
+                                            ),
+                                          ),
+                                            DataCell(
+                                            StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('Vehicles')
+          .where('userId', isEqualTo: data.docs[i]['userId'])
+          .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              print(snapshot.error);
+              return const Center(child: Text('Error'));
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Padding(
+                padding: EdgeInsets.only(top: 50),
+                child: Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.black,
+                )),
+              );
+            }
+
+            final vehicleData = snapshot.requireData;
+                                                return TextWidget(
+                                                  text: vehicleData.docs.isEmpty ? 'N/A' : '${vehicleData.docs.first['model']} - ${vehicleData.docs.first['color']}',
+                                                  fontSize: 14,
+                                                  fontFamily: 'Medium',
+                                                  color: Colors.grey,
+                                                );
+                                              }
+                                            ),
+                                          ),
+                                            DataCell(
+                                            StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('Vehicles')
+          .where('userId', isEqualTo: data.docs[i]['userId'])
+          .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              print(snapshot.error);
+              return const Center(child: Text('Error'));
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Padding(
+                padding: EdgeInsets.only(top: 50),
+                child: Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.black,
+                )),
+              );
+            }
+
+            final vehicleData = snapshot.requireData;
+                                                return TextWidget(
+                                                  text: vehicleData.docs.isEmpty ? 'N/A' : '${vehicleData.docs.first['platenumber']}',
+                                                  fontSize: 14,
+                                                  fontFamily: 'Medium',
+                                                  color: Colors.grey,
+                                                );
+                                              }
                                             ),
                                           ),
                                         ])
