@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+
 class ThirdTab extends StatefulWidget {
   const ThirdTab({super.key});
 
@@ -47,11 +48,9 @@ class _ThirdTabState extends State<ThirdTab> {
     });
   }
 
+  List reports = [];
 
-  
-    List reports = [];
-
-     String selectedValue = "In";
+  String selectedValue = "In";
 
   @override
   Widget build(BuildContext context) {
@@ -67,283 +66,316 @@ class _ThirdTabState extends State<ThirdTab> {
             ),
             body: Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextWidget(
-                        text: 'Logged Entry/Exit Status',
-                        fontSize: 24,
-                        color: primary,
-                        fontFamily: 'Bold',
-                      ),Row(
-                        children: [
-                           TextWidget(
-                        text: 'Type: ',
-                        fontSize: 24,
-                        color: primary,
-                        fontFamily: 'Bold',
-                      ),
-                      const SizedBox(width: 10,),
-                          DropdownButton<String>(
-                                    value: selectedValue,
-                                    items: <String>["In", "Out"].map((String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child:  TextWidget(
-                        text: value,
-                        fontSize: 18,
-                        color: primary,
-                        fontFamily: 'Bold',
-                      ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        selectedValue = newValue!;
-                                      });
-                                    },
-                                  ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('Records')
-          .where('type', isEqualTo: selectedValue)
-          .snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasError) {
-              print(snapshot.error);
-              return const Center(child: Text('Error'));
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Padding(
-                padding: EdgeInsets.only(top: 50),
-                child: Center(
-                    child: CircularProgressIndicator(
-                  color: Colors.black,
-                )),
-              );
-            }
-
-            final data = snapshot.requireData;
-                      return Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.grey,
-                                        width: 1), // Outer border
-                                  ),
-                                  child: DataTable(
-                                    columns: [
-                                      DataColumn(
-                                        label: TextWidget(
-                                          text: 'Personnel\nID Number',
-                                          fontSize: 18,
-                                          fontFamily: 'Bold',
-                                          color: primary,
-                                        ),
-                                      ),
-                                      DataColumn(
-                                        label: TextWidget(
-                                          text: 'Name',
-                                          fontSize: 18,
-                                          fontFamily: 'Bold',
-                                          color: primary,
-                                        ),
-                                      ),
-                                      DataColumn(
-                                        label: TextWidget(
-                                          text: 'Entry Time',
-                                          fontSize: 18,
-                                          fontFamily: 'Bold',
-                                          color: primary,
-                                        ),
-                                      ),
-                                      DataColumn(
-                                        label: TextWidget(
-                                          text: 'Type',
-                                          fontSize: 18,
-                                          fontFamily: 'Bold',
-                                          color: primary,
-                                        ),
-                                      ),
-                                        DataColumn(
-                                        label: TextWidget(
-                                          text: 'Vehicle',
-                                          fontSize: 18,
-                                          fontFamily: 'Bold',
-                                          color: primary,
-                                        ),
-                                      ),
-                                        DataColumn(
-                                        label: TextWidget(
-                                          text: 'Plate\nNumber',
-                                          fontSize: 18,
-                                          fontFamily: 'Bold',
-                                          color: primary,
-                                        ),
-                                      ),
-                                    ],
-                                    rows: [
-                                      for (int i = 0; i < data.docs.length; i++)
-                                        DataRow(cells: [
-                                          DataCell(
-                                            TextWidget(
-                                              text: data.docs[i]['userId'],
-                                              fontSize: 14,
-                                              fontFamily: 'Medium',
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                          DataCell(
-                                            StreamBuilder<DocumentSnapshot>(
-                                stream: FirebaseFirestore.instance
-                                    .collection('Users')
-                                    .doc(data.docs[i]['userId'])
-                                    .snapshots(),
-                                builder: (context,
-                                    AsyncSnapshot<DocumentSnapshot> snapshot) {
-
-                                  if (!snapshot.hasData) {
-                                    return const Center(child: Text('Loading'));
-                                  } else if (snapshot.hasError) {
-                                    return const Center(
-                                        child: Text('Something went wrong'));
-                                  } else if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const Center(
-                                        child: CircularProgressIndicator());
-                                  }
-                                  dynamic userData = snapshot.data;
-
-                                  
-                                      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                                        reports.clear();
-                                        reports.add({
-                                          'id': data.docs[i]['userId'],
-                                           'name': userData['name'],
-                                            'number': userData['number'],
-                                             'type': data.docs[i]['type'],
-                                              'timein': DateFormat.yMMMd()
-                                    .add_jm()
-                                    .format(data.docs[i]['dateTime'].toDate()),
-                                        });
-                                      },);
-                                                return TextWidget(
-                                                  text: userData['name'],
-                                                  fontSize: 14,
-                                                  fontFamily: 'Medium',
-                                                  color: Colors.grey,
-                                                );
-                                              }
-                                            ),
-                                          ),
-                                          DataCell(
-                                            TextWidget(
-                                              text: DateFormat.yMMMd()
-                                    .add_jm()
-                                    .format(data.docs[i]['dateTime'].toDate()),
-                                              fontSize: 14,
-                                              fontFamily: 'Medium',
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                          DataCell(
-                                            TextWidget(
-                                              text: data.docs[i]['type'],
-                                              fontSize: 14,
-                                              fontFamily: 'Medium',
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                            DataCell(
-                                            StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('Vehicles')
-          .where('userId', isEqualTo: data.docs[i]['userId'])
-          .snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasError) {
-              print(snapshot.error);
-              return const Center(child: Text('Error'));
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Padding(
-                padding: EdgeInsets.only(top: 50),
-                child: Center(
-                    child: CircularProgressIndicator(
-                  color: Colors.black,
-                )),
-              );
-            }
-
-            final vehicleData = snapshot.requireData;
-                                                return TextWidget(
-                                                  text: vehicleData.docs.isEmpty ? 'N/A' : '${vehicleData.docs.first['model']} - ${vehicleData.docs.first['color']}',
-                                                  fontSize: 14,
-                                                  fontFamily: 'Medium',
-                                                  color: Colors.grey,
-                                                );
-                                              }
-                                            ),
-                                          ),
-                                            DataCell(
-                                            StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('Vehicles')
-          .where('userId', isEqualTo: data.docs[i]['userId'])
-          .snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasError) {
-              print(snapshot.error);
-              return const Center(child: Text('Error'));
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Padding(
-                padding: EdgeInsets.only(top: 50),
-                child: Center(
-                    child: CircularProgressIndicator(
-                  color: Colors.black,
-                )),
-              );
-            }
-
-            final vehicleData = snapshot.requireData;
-                                                return TextWidget(
-                                                  text: vehicleData.docs.isEmpty ? 'N/A' : '${vehicleData.docs.first['platenumber']}',
-                                                  fontSize: 14,
-                                                  fontFamily: 'Medium',
-                                                  color: Colors.grey,
-                                                );
-                                              }
-                                            ),
-                                          ),
-                                        ])
-                                    ],
-                                    // DataTable's properties to add inner horizontal and vertical dividers
-                                    dividerThickness:
-                                        1, // Horizontal dividers between rows
-                                    border: const TableBorder(
-                                      horizontalInside: BorderSide(
-                                          color: Colors.grey,
-                                          width: 1), // Horizontal dividers
-                                      verticalInside: BorderSide(
-                                          color: Colors.grey,
-                                          width: 1), // Vertical dividers
-                                    ),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextWidget(
+                          text: 'Logged Entry/Exit Status',
+                          fontSize: 24,
+                          color: primary,
+                          fontFamily: 'Bold',
+                        ),
+                        Row(
+                          children: [
+                            TextWidget(
+                              text: 'Type: ',
+                              fontSize: 24,
+                              color: primary,
+                              fontFamily: 'Bold',
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            DropdownButton<String>(
+                              value: selectedValue,
+                              items: <String>["In", "Out"].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: TextWidget(
+                                    text: value,
+                                    fontSize: 18,
+                                    color: primary,
+                                    fontFamily: 'Bold',
                                   ),
                                 );
-                    }
-                  ),
-                ],
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectedValue = newValue!;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('Records')
+                            .where('type', isEqualTo: selectedValue)
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            print(snapshot.error);
+                            return const Center(child: Text('Error'));
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 50),
+                              child: Center(
+                                  child: CircularProgressIndicator(
+                                color: Colors.black,
+                              )),
+                            );
+                          }
+
+                          final data = snapshot.requireData;
+                          return Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.grey, width: 1), // Outer border
+                            ),
+                            child: DataTable(
+                              columns: [
+                                DataColumn(
+                                  label: TextWidget(
+                                    text: 'Personnel\nID Number',
+                                    fontSize: 18,
+                                    fontFamily: 'Bold',
+                                    color: primary,
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: TextWidget(
+                                    text: 'Name',
+                                    fontSize: 18,
+                                    fontFamily: 'Bold',
+                                    color: primary,
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: TextWidget(
+                                    text: 'Entry Time',
+                                    fontSize: 18,
+                                    fontFamily: 'Bold',
+                                    color: primary,
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: TextWidget(
+                                    text: 'Type',
+                                    fontSize: 18,
+                                    fontFamily: 'Bold',
+                                    color: primary,
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: TextWidget(
+                                    text: 'Vehicle',
+                                    fontSize: 18,
+                                    fontFamily: 'Bold',
+                                    color: primary,
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: TextWidget(
+                                    text: 'Plate\nNumber',
+                                    fontSize: 18,
+                                    fontFamily: 'Bold',
+                                    color: primary,
+                                  ),
+                                ),
+                              ],
+                              rows: [
+                                for (int i = 0; i < data.docs.length; i++)
+                                  DataRow(cells: [
+                                    DataCell(
+                                      TextWidget(
+                                        text: data.docs[i]['userId'],
+                                        fontSize: 14,
+                                        fontFamily: 'Medium',
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    DataCell(
+                                      StreamBuilder<DocumentSnapshot>(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('Users')
+                                              .doc(data.docs[i]['userId'])
+                                              .snapshots(),
+                                          builder: (context,
+                                              AsyncSnapshot<DocumentSnapshot>
+                                                  snapshot) {
+                                            if (!snapshot.hasData) {
+                                              return const Center(
+                                                  child: Text('Loading'));
+                                            } else if (snapshot.hasError) {
+                                              return const Center(
+                                                  child: Text(
+                                                      'Something went wrong'));
+                                            } else if (snapshot
+                                                    .connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            }
+                                            dynamic userData = snapshot.data;
+
+                                            WidgetsBinding.instance
+                                                .addPostFrameCallback(
+                                              (timeStamp) {
+                                                reports.clear();
+                                                reports.add({
+                                                  'id': data.docs[i]['userId'],
+                                                  'name': userData['name'],
+                                                  'number': userData['number'],
+                                                  'type': data.docs[i]['type'],
+                                                  'timein': DateFormat.yMMMd()
+                                                      .add_jm()
+                                                      .format(data.docs[i]
+                                                              ['dateTime']
+                                                          .toDate()),
+                                                });
+                                              },
+                                            );
+                                            return TextWidget(
+                                              text: userData['name'],
+                                              fontSize: 14,
+                                              fontFamily: 'Medium',
+                                              color: Colors.grey,
+                                            );
+                                          }),
+                                    ),
+                                    DataCell(
+                                      TextWidget(
+                                        text: DateFormat.yMMMd()
+                                            .add_jm()
+                                            .format(data.docs[i]['dateTime']
+                                                .toDate()),
+                                        fontSize: 14,
+                                        fontFamily: 'Medium',
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    DataCell(
+                                      TextWidget(
+                                        text: data.docs[i]['type'],
+                                        fontSize: 14,
+                                        fontFamily: 'Medium',
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    DataCell(
+                                      StreamBuilder<QuerySnapshot>(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('Vehicles')
+                                              .where('userId',
+                                                  isEqualTo: data.docs[i]
+                                                      ['userId'])
+                                              .snapshots(),
+                                          builder: (BuildContext context,
+                                              AsyncSnapshot<QuerySnapshot>
+                                                  snapshot) {
+                                            if (snapshot.hasError) {
+                                              print(snapshot.error);
+                                              return const Center(
+                                                  child: Text('Error'));
+                                            }
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 50),
+                                                child: Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                  color: Colors.black,
+                                                )),
+                                              );
+                                            }
+
+                                            final vehicleData =
+                                                snapshot.requireData;
+                                            return TextWidget(
+                                              text: vehicleData.docs.isEmpty
+                                                  ? 'N/A'
+                                                  : '${vehicleData.docs.first['model']} - ${vehicleData.docs.first['color']}',
+                                              fontSize: 14,
+                                              fontFamily: 'Medium',
+                                              color: Colors.grey,
+                                            );
+                                          }),
+                                    ),
+                                    DataCell(
+                                      StreamBuilder<QuerySnapshot>(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('Vehicles')
+                                              .where('userId',
+                                                  isEqualTo: data.docs[i]
+                                                      ['userId'])
+                                              .snapshots(),
+                                          builder: (BuildContext context,
+                                              AsyncSnapshot<QuerySnapshot>
+                                                  snapshot) {
+                                            if (snapshot.hasError) {
+                                              print(snapshot.error);
+                                              return const Center(
+                                                  child: Text('Error'));
+                                            }
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 50),
+                                                child: Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                  color: Colors.black,
+                                                )),
+                                              );
+                                            }
+
+                                            final vehicleData =
+                                                snapshot.requireData;
+                                            return TextWidget(
+                                              text: vehicleData.docs.isEmpty
+                                                  ? 'N/A'
+                                                  : '${vehicleData.docs.first['platenumber']}',
+                                              fontSize: 14,
+                                              fontFamily: 'Medium',
+                                              color: Colors.grey,
+                                            );
+                                          }),
+                                    ),
+                                  ])
+                              ],
+                              // DataTable's properties to add inner horizontal and vertical dividers
+                              dividerThickness:
+                                  1, // Horizontal dividers between rows
+                              border: const TableBorder(
+                                horizontalInside: BorderSide(
+                                    color: Colors.grey,
+                                    width: 1), // Horizontal dividers
+                                verticalInside: BorderSide(
+                                    color: Colors.grey,
+                                    width: 1), // Vertical dividers
+                              ),
+                            ),
+                          );
+                        }),
+                  ],
+                ),
               ),
             ),
           )
@@ -360,9 +392,7 @@ class _ThirdTabState extends State<ThirdTab> {
       'ID',
       'Name',
       'Contact Number',
-      
       'Time In',
-      
       'Visitor/Personnel'
     ];
 
@@ -374,9 +404,7 @@ class _ThirdTabState extends State<ThirdTab> {
         tableDataList[i]['id'],
         tableDataList[i]['name'],
         tableDataList[i]['number'],
-       
         tableDataList[i]['timein'],
-        
         tableDataList[i]['type'],
       ]);
     }

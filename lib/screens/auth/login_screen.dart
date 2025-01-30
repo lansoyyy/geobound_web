@@ -74,8 +74,8 @@ class _LoginScreenState extends State<LoginScreen> {
               radius: 10,
               label: 'Login',
               onPressed: () {
-                if (username.text == 'admin_username' &&
-                    password.text == 'admin_password') {
+                if (username.text == 'admin_username123' &&
+                    password.text == 'admin_password123') {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const HomeScreen()));
                 } else {

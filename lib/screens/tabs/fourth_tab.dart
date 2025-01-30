@@ -593,8 +593,8 @@ class FourthTab extends StatelessWidget {
                                     DataCell(
                                       StreamBuilder<QuerySnapshot>(
                                           stream: FirebaseFirestore.instance
-                                              .collection('Records')
-                                              .where('userId',
+                                              .collection('Users')
+                                              .where('id',
                                                   isEqualTo: data.docs[i]
                                                       ['userId'])
                                               .snapshots(),
@@ -621,15 +621,23 @@ class FourthTab extends StatelessWidget {
 
                                             final recordData =
                                                 snapshot.requireData;
-                                            return TextWidget(
-                                              text: recordData.docs.isEmpty
-                                                  ? 'N/A'
-                                                  : recordData
-                                                      .docs.first['type'],
-                                              fontSize: 14,
-                                              fontFamily: 'Medium',
-                                              color: Colors.grey,
-                                            );
+                                            return Builder(builder: (context) {
+                                              LatLng pointToCheck = LatLng(
+                                                  recordData.docs.first['lat'],
+                                                  recordData.docs.first['lng']);
+                                              final bool isInside =
+                                                  isPointInPolygon(
+                                                      pointToCheck, polygon);
+
+                                              return TextWidget(
+                                                text: isInside
+                                                    ? 'Present'
+                                                    : 'Not Present',
+                                                fontSize: 14,
+                                                fontFamily: 'Medium',
+                                                color: Colors.grey,
+                                              );
+                                            });
                                           }),
                                     ),
                                   ])
