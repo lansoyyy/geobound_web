@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:geobound_web/utils/colors.dart';
 import 'package:geobound_web/utils/const.dart';
 import 'package:geobound_web/widgets/text_widget.dart';
 import 'package:latlong2/latlong.dart';
@@ -61,8 +60,8 @@ class FourthTab extends StatelessWidget {
                           children: [
                             FlutterMap(
                               options: const MapOptions(
-                                initialCenter: LatLng(8.486308,
-                                    124.657486), // Center the map over London
+                                initialCenter: LatLng(8.480675,
+                                    124.660238), // Center the map over London
                                 initialZoom: 18,
                               ),
                               children: [
@@ -124,13 +123,24 @@ class FourthTab extends StatelessWidget {
                                   polygons: [
                                     Polygon(
                                         points: [
-                                          const LatLng(8.486484, 124.657151),
-                                          const LatLng(8.486279, 124.657089),
-                                          const LatLng(8.485970, 124.657461),
-                                          const LatLng(8.486062, 124.657685),
-                                          const LatLng(8.486341, 124.657471),
-                                          const LatLng(8.486487, 124.657163),
-                                          const LatLng(8.486484, 124.657151),
+                                          const LatLng(8.482386, 124.660703),
+                                          const LatLng(8.482260, 124.660365),
+                                          const LatLng(8.481648, 124.660055),
+                                          const LatLng(8.481202, 124.659958),
+                                          const LatLng(8.480607, 124.659869),
+                                          const LatLng(8.480215, 124.659576),
+                                          const LatLng(8.479867, 124.659387),
+                                          const LatLng(8.479635, 124.659260),
+                                          const LatLng(8.479411, 124.659815),
+                                          const LatLng(8.480161, 124.660293),
+                                          const LatLng(8.480991, 124.660573),
+                                          const LatLng(8.480714, 124.661805),
+                                          const LatLng(8.480902, 124.661981),
+                                          const LatLng(8.481415, 124.662026),
+                                          const LatLng(8.481700, 124.661579),
+                                          const LatLng(8.481852, 124.661223),
+                                          const LatLng(8.482227, 124.660812),
+                                          const LatLng(8.482386, 124.660703),
                                         ],
                                         color: Colors.red.withOpacity(0.2),
                                         borderColor: Colors.black,
@@ -311,344 +321,466 @@ class FourthTab extends StatelessWidget {
         });
   }
 
-  showDetailDialog(context) {
+  void showDetailDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
         return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           child: StreamBuilder<QuerySnapshot>(
-              stream:
-                  FirebaseFirestore.instance.collection('Users').snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  return const Center(child: Text('Error'));
-                }
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Padding(
-                    padding: EdgeInsets.only(top: 50),
-                    child: Center(
-                        child: CircularProgressIndicator(
-                      color: Colors.black,
-                    )),
-                  );
-                }
-
-                final data = snapshot.requireData;
-                return SizedBox(
-                  height: 450,
-                  width: 680,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          TextWidget(
-                            text: 'Monitor Realtime Status',
-                            fontSize: 24,
-                            color: primary,
-                            fontFamily: 'Bold',
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.grey, width: 1), // Outer border
-                            ),
-                            child: DataTable(
-                              columns: [
-                                DataColumn(
-                                  label: TextWidget(
-                                    text: 'ID Number',
-                                    fontSize: 18,
-                                    fontFamily: 'Bold',
-                                    color: primary,
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: TextWidget(
-                                    text: 'Name',
-                                    fontSize: 18,
-                                    fontFamily: 'Bold',
-                                    color: primary,
-                                  ),
-                                ),
-                                // DataColumn(
-                                //   label: TextWidget(
-                                //     text: 'Date and Time',
-                                //     fontSize: 18,
-                                //     fontFamily: 'Bold',
-                                //     color: primary,
-                                //   ),
-                                // ),
-                                DataColumn(
-                                  label: TextWidget(
-                                    text: 'Current Status',
-                                    fontSize: 18,
-                                    fontFamily: 'Bold',
-                                    color: primary,
-                                  ),
-                                ),
-                              ],
-                              rows: [
-                                for (int i = 0; i < data.docs.length; i++)
-                                  DataRow(cells: [
-                                    DataCell(
-                                      TextWidget(
-                                        text: data.docs[i]['id'],
-                                        fontSize: 14,
-                                        fontFamily: 'Medium',
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    DataCell(
-                                      TextWidget(
-                                        text: data.docs[i]['name'],
-                                        fontSize: 14,
-                                        fontFamily: 'Medium',
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    // DataCell(
-                                    //   TextWidget(
-                                    //     text: DateFormat('yyyy-MM-dd')
-                                    //         .format(DateTime.now()),
-                                    //     fontSize: 14,
-                                    //     fontFamily: 'Medium',
-                                    //     color: Colors.grey,
-                                    //   ),
-                                    // ),
-                                    DataCell(
-                                      Builder(builder: (context) {
-                                        LatLng pointToCheck = LatLng(
-                                            data.docs[i]['lat'],
-                                            data.docs[i]['lng']);
-                                        final bool isInside = isPointInPolygon(
-                                            pointToCheck, polygon);
-
-                                        return TextWidget(
-                                          text: isInside
-                                              ? 'Present'
-                                              : 'Not Present',
-                                          fontSize: 14,
-                                          fontFamily: 'Medium',
-                                          color: Colors.grey,
-                                        );
-                                      }),
-                                    ),
-                                  ])
-                              ],
-                              // DataTable's properties to add inner horizontal and vertical dividers
-                              dividerThickness:
-                                  1, // Horizontal dividers between rows
-                              border: const TableBorder(
-                                horizontalInside: BorderSide(
-                                    color: Colors.grey,
-                                    width: 1), // Horizontal dividers
-                                verticalInside: BorderSide(
-                                    color: Colors.grey,
-                                    width: 1), // Vertical dividers
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
+            stream: FirebaseFirestore.instance.collection('Users').snapshots(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                print(snapshot.error);
+                return const Center(child: Text('Error loading data'));
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Padding(
+                  padding: EdgeInsets.only(top: 50),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.blue,
                     ),
                   ),
                 );
-              }),
+              }
+
+              final data = snapshot.requireData;
+              return SizedBox(
+                height: 600,
+                width: 800,
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Monitor Realtime Status',
+                            style: TextStyle(
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close, color: Colors.grey),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Centered Data Table
+                      Expanded(
+                        child: Center(
+                          child: Container(
+                            width: 700,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: DataTable(
+                                columnSpacing: 40,
+                                headingRowColor: WidgetStateColor.resolveWith(
+                                  (states) => Colors.blue,
+                                ),
+                                border: const TableBorder.symmetric(
+                                  inside: BorderSide(
+                                      color: Colors.grey, width: 0.5),
+                                ),
+                                columns: const [
+                                  DataColumn(
+                                    label: Expanded(
+                                      child: Text(
+                                        'ID Number',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Expanded(
+                                      child: Text(
+                                        'Name',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Expanded(
+                                      child: Text(
+                                        'Current Status',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                rows: data.docs.map((doc) {
+                                  LatLng pointToCheck =
+                                      LatLng(doc['lat'], doc['lng']);
+                                  final bool isInside =
+                                      isPointInPolygon(pointToCheck, polygon);
+
+                                  return DataRow(
+                                    cells: [
+                                      DataCell(
+                                        Center(
+                                          child: Text(
+                                            doc['id'],
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                          child: Text(
+                                            doc['name'],
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ),
+                                      ),
+                                      DataCell(
+                                        Center(
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: isInside
+                                                  ? Colors.green[100]
+                                                  : Colors.red[100],
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: Text(
+                                              isInside
+                                                  ? 'Present'
+                                                  : 'Not Present',
+                                              style: TextStyle(
+                                                color: isInside
+                                                    ? Colors.green[800]
+                                                    : Colors.red[800],
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Action Button
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: ElevatedButton.icon(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(Icons.done),
+                          label: const Text('Close'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
         );
       },
     );
   }
 
-  showDetailDialog1(context) {
+  void showDetailDialog1(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
         return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           child: StreamBuilder<QuerySnapshot>(
-              stream:
-                  FirebaseFirestore.instance.collection('Vehicles').snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  return const Center(child: Text('Error'));
-                }
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Padding(
-                    padding: EdgeInsets.only(top: 50),
-                    child: Center(
-                        child: CircularProgressIndicator(
-                      color: Colors.black,
-                    )),
-                  );
-                }
-
-                final data = snapshot.requireData;
-                return SizedBox(
-                  height: 450,
-                  width: 680,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          TextWidget(
-                            text: 'Monitor Realtime Status',
-                            fontSize: 24,
-                            color: primary,
-                            fontFamily: 'Bold',
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.grey, width: 1), // Outer border
-                            ),
-                            child: DataTable(
-                              columns: [
-                                DataColumn(
-                                  label: TextWidget(
-                                    text: 'Personnel ID',
-                                    fontSize: 18,
-                                    fontFamily: 'Bold',
-                                    color: primary,
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: TextWidget(
-                                    text: 'Model',
-                                    fontSize: 18,
-                                    fontFamily: 'Bold',
-                                    color: primary,
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: TextWidget(
-                                    text: 'Plate Number',
-                                    fontSize: 18,
-                                    fontFamily: 'Bold',
-                                    color: primary,
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: TextWidget(
-                                    text: 'Current Status',
-                                    fontSize: 18,
-                                    fontFamily: 'Bold',
-                                    color: primary,
-                                  ),
-                                ),
-                              ],
-                              rows: [
-                                for (int i = 0; i < data.docs.length; i++)
-                                  DataRow(cells: [
-                                    DataCell(
-                                      TextWidget(
-                                        text: data.docs[i]['userId'],
-                                        fontSize: 14,
-                                        fontFamily: 'Medium',
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    DataCell(
-                                      TextWidget(
-                                        text: data.docs[i]['model'],
-                                        fontSize: 14,
-                                        fontFamily: 'Medium',
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    DataCell(
-                                      TextWidget(
-                                        text: data.docs[i]['platenumber'],
-                                        fontSize: 14,
-                                        fontFamily: 'Medium',
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    DataCell(
-                                      StreamBuilder<QuerySnapshot>(
-                                          stream: FirebaseFirestore.instance
-                                              .collection('Users')
-                                              .where('id',
-                                                  isEqualTo: data.docs[i]
-                                                      ['userId'])
-                                              .snapshots(),
-                                          builder: (BuildContext context,
-                                              AsyncSnapshot<QuerySnapshot>
-                                                  snapshot) {
-                                            if (snapshot.hasError) {
-                                              print(snapshot.error);
-                                              return const Center(
-                                                  child: Text('Error'));
-                                            }
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              return const Padding(
-                                                padding:
-                                                    EdgeInsets.only(top: 50),
-                                                child: Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                  color: Colors.black,
-                                                )),
-                                              );
-                                            }
-
-                                            final recordData =
-                                                snapshot.requireData;
-                                            return Builder(builder: (context) {
-                                              LatLng pointToCheck = LatLng(
-                                                  recordData.docs.first['lat'],
-                                                  recordData.docs.first['lng']);
-                                              final bool isInside =
-                                                  isPointInPolygon(
-                                                      pointToCheck, polygon);
-
-                                              return TextWidget(
-                                                text: isInside
-                                                    ? 'Present'
-                                                    : 'Not Present',
-                                                fontSize: 14,
-                                                fontFamily: 'Medium',
-                                                color: Colors.grey,
-                                              );
-                                            });
-                                          }),
-                                    ),
-                                  ])
-                              ],
-                              // DataTable's properties to add inner horizontal and vertical dividers
-                              dividerThickness:
-                                  1, // Horizontal dividers between rows
-                              border: const TableBorder(
-                                horizontalInside: BorderSide(
-                                    color: Colors.grey,
-                                    width: 1), // Horizontal dividers
-                                verticalInside: BorderSide(
-                                    color: Colors.grey,
-                                    width: 1), // Vertical dividers
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+            stream:
+                FirebaseFirestore.instance.collection('Vehicles').snapshots(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                print(snapshot.error);
+                return const Center(child: Text('Error loading data'));
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Padding(
+                  padding: EdgeInsets.only(top: 50),
+                  child: Center(
+                    child: CircularProgressIndicator(color: Colors.blue),
                   ),
                 );
-              }),
+              }
+
+              final data = snapshot.requireData;
+
+              return SizedBox(
+                height: 600,
+                width: 800,
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Monitor Realtime Status',
+                            style: TextStyle(
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close, color: Colors.grey),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Centered Data Table
+                      Expanded(
+                        child: Container(
+                          width: 700,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: SingleChildScrollView(
+                            child: Center(
+                              child: DataTable(
+                                columnSpacing: 80,
+                                headingRowColor: WidgetStateColor.resolveWith(
+                                  (states) => Colors.blue,
+                                ),
+                                border: const TableBorder.symmetric(
+                                  inside: BorderSide(
+                                      color: Colors.grey, width: 0.5),
+                                ),
+                                columns: const [
+                                  DataColumn(
+                                    label: Center(
+                                      child: Text(
+                                        'Personnel ID',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Center(
+                                      child: Text(
+                                        'Model',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Center(
+                                      child: Text(
+                                        'Plate Number',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Center(
+                                      child: Text(
+                                        'Current Status',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                rows: data.docs.map((doc) {
+                                  return DataRow(cells: [
+                                    DataCell(Center(
+                                      child: Text(
+                                        doc['userId'],
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    )),
+                                    DataCell(Center(
+                                      child: Text(
+                                        doc['model'],
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    )),
+                                    DataCell(Center(
+                                      child: Text(
+                                        doc['platenumber'],
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    )),
+                                    DataCell(Center(
+                                      child: StreamBuilder<QuerySnapshot>(
+                                        stream: FirebaseFirestore.instance
+                                            .collection('Users')
+                                            .where('id',
+                                                isEqualTo: doc['userId'])
+                                            .snapshots(),
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<QuerySnapshot>
+                                                snapshot) {
+                                          if (snapshot.hasError) {
+                                            print(snapshot.error);
+                                            return const Text('Error');
+                                          }
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const CircularProgressIndicator(
+                                                color: Colors.black);
+                                          }
+
+                                          final recordData =
+                                              snapshot.requireData;
+                                          if (recordData.docs.isEmpty) {
+                                            return const Text('No Data');
+                                          }
+
+                                          LatLng pointToCheck = LatLng(
+                                            recordData.docs.first['lat'],
+                                            recordData.docs.first['lng'],
+                                          );
+                                          final bool isInside =
+                                              isPointInPolygon(
+                                                  pointToCheck, polygon);
+
+                                          return Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: isInside
+                                                  ? Colors.green[100]
+                                                  : Colors.red[100],
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: Text(
+                                              isInside
+                                                  ? 'Present'
+                                                  : 'Not Present',
+                                              style: TextStyle(
+                                                color: isInside
+                                                    ? Colors.green[800]
+                                                    : Colors.red[800],
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    )),
+                                  ]);
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Action Button
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: ElevatedButton.icon(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(Icons.done),
+                          label: const Text('Close'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
         );
       },
     );

@@ -305,92 +305,108 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text(
-              inUpdate ? 'Update Employee Details' : 'Create New Employee'),
-          content: SingleChildScrollView(
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(
-                  controller: fullnameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Fullname',
-                    border: OutlineInputBorder(),
+                Text(
+                  inUpdate ? 'Update Employee Details' : 'Create New Employee',
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: rfidController,
-                  decoration: const InputDecoration(
-                    labelText: 'ID Number',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: contactController,
-                  decoration: const InputDecoration(
-                    labelText: 'Contact No.',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: addressController,
-                  decoration: const InputDecoration(
-                    labelText: 'Address',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: sectorController,
-                  decoration: const InputDecoration(
-                    labelText: 'Assigned Sector',
-                    border: OutlineInputBorder(),
-                  ),
+                const SizedBox(height: 20),
+                _buildTextField(fullnameController, 'Fullname', Icons.person),
+                const SizedBox(height: 12),
+                _buildTextField(rfidController, 'ID Number', Icons.badge,
+                    keyboardType: TextInputType.number),
+                const SizedBox(height: 12),
+                _buildTextField(contactController, 'Contact No.', Icons.phone,
+                    keyboardType: TextInputType.phone),
+                const SizedBox(height: 12),
+                _buildTextField(addressController, 'Address', Icons.home),
+                const SizedBox(height: 12),
+                _buildTextField(
+                    sectorController, 'Assigned Sector', Icons.work),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () async {
+                        addUser(
+                          fullnameController.text,
+                          contactController.text,
+                          rfidController.text,
+                          addressController.text,
+                          sectorController.text,
+                          '',
+                          'Personnel',
+                        );
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(Icons.save),
+                      label: const Text('Save'),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                // await FirebaseFirestore.instance
-                //     .collection('Users')
-                //     .doc(data.id)
-                //     .update({
-                //   'name': fullnameController.text,
-                //   'number': contactController.text,
-                //   'address': addressController.text,
-                //   'id': rfidController.text,
-                //   'sector': sectorController.text
-                // });
-                // // Handle saving the new employee's information here
-                addUser(
-                    fullnameController.text,
-                    contactController.text,
-                    rfidController.text,
-                    addressController.text,
-                    sectorController.text,
-                    '',
-                    'Personnel');
-                Navigator.of(context).pop();
-              },
-              child: const Text('Save'),
-            ),
-          ],
         );
       },
+    );
+  }
+
+  // Helper function for text fields
+  Widget _buildTextField(
+    TextEditingController controller,
+    String label,
+    IconData icon, {
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: Colors.blue),
+        filled: true,
+        fillColor: Colors.grey[100],
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.blue, width: 2),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      ),
     );
   }
 }
